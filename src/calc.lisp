@@ -127,3 +127,7 @@
       (:ul
        (:li "C ... 入力中の数をクリアする。")
        (:li "R ... 計算を初期化する。"))))
+
+(defun main ()
+  (start-server)
+  (loop (sleep 60)))
