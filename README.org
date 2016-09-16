@@ -1,0 +1,13 @@
+* Calc 
+
+** Usage
+
+** Installation
+
+** Author
+
++ hiroshi kimura (hiroshi.kimura.0331@gmail.com)
+
+** Copyright
+
+Copyright (c) 2016 hiroshi kimura (hiroshi.kimura.0331@gmail.com)
