@@ -1,6 +1,6 @@
 input#calc { text-align: right;
-             background: lightyellow
-             border: 1pt solid darkgreen;
+             border: 1pt dotted black;
              font-size: 18pt;
+             background: lightyellow;
            }
 

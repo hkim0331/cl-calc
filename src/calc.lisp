@@ -7,19 +7,19 @@
 (defvar *display* 0)
 (defvar *stack* nil)
 (defvar *operands* 0)
-(defvar *http* nil)
+(defvar *http*)
 
 (setf (html-mode) :html5)
 
-(defun publish-static-content ()
+;; FIXME: no effect.
+(defun static-files ()
   (push (create-static-file-dispatcher-and-handler
-         "/calc.css" "static/calc.css")
-        *dispatch-table*))
-(publish-static-content)
+         "/calc.css" "static/calc.css") *dispatch-table*))
 
 (defun start-server (&optional (port 8080))
   ;; (setf *http* (make-instance 'easy-acceptor :port port
-  ;;                             :document-root #p "static"))
+  ;;                             :document-root #p "static/"))
+  (static-files)
   (setf *http* (make-instance 'easy-acceptor :port port))
   (start *http*))
 
@@ -32,11 +32,20 @@
      (:html
       :lang "ja"
       (:head
-       (:meta :charset "utf-8")
-       (:meta :http-equiv "X-UA-Compatible" :content "IE=edge")
-       (:meta :name "viewport" :content "width=device-width, initial-scale=1.0")
-       (:link :rel "stylesheet" :type "text/css" :href "/calc.css")
-       (:link :rel "stylesheet" :type "text/css" :href "//netdna.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css")
+       (:meta
+        :charset "utf-8")
+       (:meta
+        :http-equiv "X-UA-Compatible"
+        :content "IE=edge")
+       (:meta
+        :name "viewport"
+        :content "width=device-width, initial-scale=1.0")
+       (:link
+        :rel "stylesheet"
+        :href "/calc.css")
+       (:link
+        :rel "stylesheet"
+        :href "//netdna.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css")
        (:title ,title))
       (:body
        (:div :class "container"
@@ -52,7 +61,7 @@
 (define-easy-handler (digit :uri "/digit") (name)
   (setf *value* (+ (* 10 *value*) (parse-integer name)))
   (setf *display* *value*)
-  (redirect "/calc"))
+  (redirect "/index"))
 
 (defmacro push-button ()
     `(htm (:form :action "/push" :method "post"
@@ -64,7 +73,7 @@
   (setf *display* *value*)
   (setf *value* 0)
   (incf *operands*)
-  (redirect "/calc"))
+  (redirect "/index"))
 
 (defmacro clear-button ()
   `(htm (:form :action "/clear" :method "post"
@@ -79,7 +88,7 @@
 (define-easy-handler (clear :uri "/clear") ()
   (setf *value* 0)
   (setf *display* *value*)
-  (redirect "/calc"))
+  (redirect "/index"))
 
 (defmacro op-button (value)
   `(htm (:form :action "/op" :method "post"
@@ -101,17 +110,16 @@
         (setf *value* 0)
         (decf *operands*))
       (setf *display* "forget push?"))
-  (redirect "/calc"))
-
+  (redirect "/index"))
 
 (define-easy-handler (c-reset :uri "/reset") ()
   (setf *stack* nil)
   (setf *value* 0)
   (setf *display* 0)
   (setf *operands* 0)
-  (redirect "/calc"))
+  (redirect "/index"))
 
-(define-easy-handler (calc :uri "/calc") ()
+(define-easy-handler (calc :uri "/index") ()
     (standard-page
         (:title "calc")
       (:h1 "reverse polish calculator")
