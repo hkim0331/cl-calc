@@ -44,6 +44,7 @@
         (:hr)
         (:span "programmed by hkimura."))))))
 
+;; FIXME, buttons. もっと抽象化のレベルを上げよう。
 (defmacro digit-button (value)
   `(htm (:form :action "/digit" :method "post"
                (:input :class "btn btn-primary"
@@ -52,7 +53,7 @@
 (define-easy-handler (digit :uri "/digit") (name)
   (setf *value* (+ (* 10 *value*) (parse-integer name)))
   (setf *display* *value*)
-  (redirect "/calc"))
+  (redirect "/index"))
 
 (defmacro push-button ()
     `(htm (:form :action "/push" :method "post"
@@ -64,7 +65,7 @@
   (setf *display* *value*)
   (setf *value* 0)
   (incf *operands*)
-  (redirect "/calc"))
+  (redirect "/index"))
 
 (defmacro clear-button ()
   `(htm (:form :action "/clear" :method "post"
@@ -79,12 +80,22 @@
 (define-easy-handler (clear :uri "/clear") ()
   (setf *value* 0)
   (setf *display* *value*)
-  (redirect "/calc"))
+  (redirect "/index"))
 
 (defmacro op-button (value)
-  `(htm (:form :action "/op" :method "post"
+    `(htm (:form :action "/op" :method "post"
                (:input :class "btn btn-info"
                        :type "submit" :name "name" :value ,value))))
+
+(defmacro sign-button ()
+  `(htm (:form :action "/sign" :method "post"
+               (:input :class "btn btn-info"
+                       :type "submit" :name "name" :value "+/-"))))
+
+;; FIXME: 表示が変わらない。
+(define-easy-handler (sign :uri "/sign") ()
+  (setf *value* (* -1 *value*) *display* (* -1 *display*))
+  (redirect "/index"))
 
 (define-easy-handler (op :uri "/op") (name)
   (if (> *operands* 1)
@@ -101,17 +112,16 @@
         (setf *value* 0)
         (decf *operands*))
       (setf *display* "forget push?"))
-  (redirect "/calc"))
-
+  (redirect "/index"))
 
 (define-easy-handler (c-reset :uri "/reset") ()
   (setf *stack* nil)
   (setf *value* 0)
   (setf *display* 0)
   (setf *operands* 0)
-  (redirect "/calc"))
+  (redirect "/index"))
 
-(define-easy-handler (calc :uri "/calc") ()
+(define-easy-handler (index :uri "/index") ()
     (standard-page
         (:title "calc")
       (:h1 "reverse polish calculator")
@@ -125,6 +135,8 @@
        (:tr (dolist (i '(:+ :- :* :/))
               (htm (:td (op-button i)))))
        (:tr (:td (clear-button)) (:td (reset-button))))
+      (:table
+       (:tr (:td (sign-button))))
       (:hr)
       (:ul
        (:li "C ... 入力中の数をクリアする。")
