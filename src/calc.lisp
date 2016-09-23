@@ -94,8 +94,8 @@
 
 ;; FIXME: 表示が変わらない。
 (define-easy-handler (sign :uri "/sign") ()
-  (setf *value* (* -1 *value*))
-  (redirect "/index"))                  ; reload?
+  (setf *value* (* -1 *value*) *display* (* -1 *display*))
+  (redirect "/index"))
 
 (define-easy-handler (op :uri "/op") (name)
   (if (> *operands* 1)
