@@ -7,19 +7,19 @@
 (defvar *display* 0)
 (defvar *stack* nil)
 (defvar *operands* 0)
-(defvar *http* nil)
+(defvar *http*)
 
 (setf (html-mode) :html5)
 
-(defun publish-static-content ()
+;; FIXME: no effect.
+(defun static-files ()
   (push (create-static-file-dispatcher-and-handler
-         "/calc.css" "static/calc.css")
-        *dispatch-table*))
-(publish-static-content)
+         "/calc.css" "static/calc.css") *dispatch-table*))
 
 (defun start-server (&optional (port 8080))
   ;; (setf *http* (make-instance 'easy-acceptor :port port
-  ;;                             :document-root #p "static"))
+  ;;                             :document-root #p "static/"))
+  (static-files)
   (setf *http* (make-instance 'easy-acceptor :port port))
   (start *http*))
 
@@ -32,11 +32,20 @@
      (:html
       :lang "ja"
       (:head
-       (:meta :charset "utf-8")
-       (:meta :http-equiv "X-UA-Compatible" :content "IE=edge")
-       (:meta :name "viewport" :content "width=device-width, initial-scale=1.0")
-       (:link :rel "stylesheet" :type "text/css" :href "/calc.css")
-       (:link :rel "stylesheet" :type "text/css" :href "//netdna.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css")
+       (:meta
+        :charset "utf-8")
+       (:meta
+        :http-equiv "X-UA-Compatible"
+        :content "IE=edge")
+       (:meta
+        :name "viewport"
+        :content "width=device-width, initial-scale=1.0")
+       (:link
+        :rel "stylesheet"
+        :href "/calc.css")
+       (:link
+        :rel "stylesheet"
+        :href "//netdna.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css")
        (:title ,title))
       (:body
        (:div :class "container"
@@ -92,9 +101,9 @@
                (:input :class "btn btn-info"
                        :type "submit" :name "name" :value "+/-"))))
 
-;; FIXME: 表示が変わらない。
 (define-easy-handler (sign :uri "/sign") ()
-  (setf *value* (* -1 *value*) *display* (* -1 *display*))
+  (setf *value* (* -1 *value*)
+        *display* (* -1 *display*))
   (redirect "/index"))
 
 (define-easy-handler (op :uri "/op") (name)
@@ -121,7 +130,7 @@
   (setf *operands* 0)
   (redirect "/index"))
 
-(define-easy-handler (index :uri "/index") ()
+(define-easy-handler (calc :uri "/index") ()
     (standard-page
         (:title "calc")
       (:h1 "reverse polish calculator")
