@@ -15,10 +15,12 @@
   (push (create-static-file-dispatcher-and-handler
          "/calc.css" "static/calc.css")
         *dispatch-table*))
+(publish-static-content)
 
 (defun start-server (&optional (port 8080))
+  ;; (setf *http* (make-instance 'easy-acceptor :port port
+  ;;                             :document-root #p "static"))
   (setf *http* (make-instance 'easy-acceptor :port port))
-  (publish-static-content)
   (start *http*))
 
 (defun stop-server ()
@@ -33,8 +35,8 @@
        (:meta :charset "utf-8")
        (:meta :http-equiv "X-UA-Compatible" :content "IE=edge")
        (:meta :name "viewport" :content "width=device-width, initial-scale=1.0")
-       (:link :rel "stylesheet" :type "text/css" :href "http://netdna.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css")
-       (:style "input#calc { text-align: right; background: lightyellow;}")
+       (:link :rel "stylesheet" :type "text/css" :href "/calc.css")
+       (:link :rel "stylesheet" :type "text/css" :href "//netdna.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css")
        (:title ,title))
       (:body
        (:div :class "container"
@@ -127,3 +129,7 @@
       (:ul
        (:li "C ... 入力中の数をクリアする。")
        (:li "R ... 計算を初期化する。"))))
+
+(defun main ()
+  (start-server)
+  (loop (sleep 60)))
