@@ -44,6 +44,7 @@
         (:hr)
         (:span "programmed by hkimura."))))))
 
+;; FIXME, buttons. もっと抽象化のレベルを上げよう。
 (defmacro digit-button (value)
   `(htm (:form :action "/digit" :method "post"
                (:input :class "btn btn-primary"
@@ -94,7 +95,7 @@
 ;; FIXME: 表示が変わらない。
 (define-easy-handler (sign :uri "/sign") ()
   (setf *value* (* -1 *value*))
-  (redirect "/index"))
+  (redirect "/index"))                  ; reload?
 
 (define-easy-handler (op :uri "/op") (name)
   (if (> *operands* 1)
