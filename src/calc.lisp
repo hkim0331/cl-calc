@@ -82,9 +82,19 @@
   (redirect "/index"))
 
 (defmacro op-button (value)
-  `(htm (:form :action "/op" :method "post"
+    `(htm (:form :action "/op" :method "post"
                (:input :class "btn btn-info"
                        :type "submit" :name "name" :value ,value))))
+
+(defmacro sign-button ()
+  `(htm (:form :action "/sign" :method "post"
+               (:input :class "btn btn-info"
+                       :type "submit" :name "name" :value "+/-"))))
+
+;; FIXME: 表示が変わらない。
+(define-easy-handler (sign :uri "/sign") ()
+  (setf *value* (* -1 *value*))
+  (redirect "/index"))
 
 (define-easy-handler (op :uri "/op") (name)
   (if (> *operands* 1)
@@ -102,7 +112,6 @@
         (decf *operands*))
       (setf *display* "forget push?"))
   (redirect "/index"))
-
 
 (define-easy-handler (c-reset :uri "/reset") ()
   (setf *stack* nil)
@@ -125,6 +134,8 @@
        (:tr (dolist (i '(:+ :- :* :/))
               (htm (:td (op-button i)))))
        (:tr (:td (clear-button)) (:td (reset-button))))
+      (:table
+       (:tr (:td (sign-button))))
       (:hr)
       (:ul
        (:li "C ... 入力中の数をクリアする。")
