@@ -52,7 +52,7 @@
 (define-easy-handler (digit :uri "/digit") (name)
   (setf *value* (+ (* 10 *value*) (parse-integer name)))
   (setf *display* *value*)
-  (redirect "/calc"))
+  (redirect "/index"))
 
 (defmacro push-button ()
     `(htm (:form :action "/push" :method "post"
@@ -64,7 +64,7 @@
   (setf *display* *value*)
   (setf *value* 0)
   (incf *operands*)
-  (redirect "/calc"))
+  (redirect "/index"))
 
 (defmacro clear-button ()
   `(htm (:form :action "/clear" :method "post"
@@ -79,7 +79,7 @@
 (define-easy-handler (clear :uri "/clear") ()
   (setf *value* 0)
   (setf *display* *value*)
-  (redirect "/calc"))
+  (redirect "/index"))
 
 (defmacro op-button (value)
   `(htm (:form :action "/op" :method "post"
@@ -101,7 +101,7 @@
         (setf *value* 0)
         (decf *operands*))
       (setf *display* "forget push?"))
-  (redirect "/calc"))
+  (redirect "/index"))
 
 
 (define-easy-handler (c-reset :uri "/reset") ()
@@ -109,9 +109,9 @@
   (setf *value* 0)
   (setf *display* 0)
   (setf *operands* 0)
-  (redirect "/calc"))
+  (redirect "/index"))
 
-(define-easy-handler (calc :uri "/calc") ()
+(define-easy-handler (index :uri "/index") ()
     (standard-page
         (:title "calc")
       (:h1 "reverse polish calculator")
